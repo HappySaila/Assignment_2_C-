@@ -18,10 +18,25 @@ void Debug(string s);
 
 int main(int argc, char const *argv[])
 {
+	VolImage::printUILine();
 	string baseName = argv[1];
 	//read files
 	VolImage v(429, 303,123);
 	v.readImages(baseName);
+
+	string arg1 = string(argv[2]);
+	if (argc> 2){
+		if (arg1 == "-x"){
+			//call extract
+			v.extract(atoi(argv[3]), argv[4]);
+		} else if (arg1 == "-d"){
+			v.diffmap(atoi(argv[3]), atoi(argv[4]), argv[5]);
+		} else if (arg1 == "-g"){
+			v.extractFront(atoi(argv[3]));
+		} else {
+			cout << "no such flag " << arg1 << endl;
+		}
+	}
 
 	//extract input to call correct functions
 	if (argc > 2){
@@ -95,6 +110,8 @@ bool VolImage::readImages(string baseName){
 			}
 		} else {
 			cout << "Unable to open file: " << fileName << endl;
+			VolImage::printUILine();
+			exit(0);
 			return false;
 		}
 
@@ -111,6 +128,8 @@ bool VolImage::readImages(string baseName){
 	//TODO: calculate the number of bytes required
 	cout << "Number of bytes required: " << 56 << endl;
 	cout << "Number of images: " << slices.size() << endl; 
+	VolImage::printUILine();
+
 
 	return true;
 }
@@ -118,20 +137,24 @@ bool VolImage::readImages(string baseName){
 void VolImage::extract(int sliceId, string output_prefix){
 	//will extract slice sliceId from the slices and write it to the output file
 	string outfileName = "extracted_Images/"+output_prefix + to_string(sliceId) + ".raw";
-	fstream reader(outfileName, ios::binary | ios::out | ios::trunc);
+	fstream writer(outfileName, ios::binary | ios::out | ios::trunc);
 
-	if (reader.is_open()){
+	if (writer.is_open()){
 		for (int i = 0; i < height; ++i)
 		{
-			reader.write((char*)slices[sliceId][i], width);
+			writer.write((char*)slices[sliceId][i], width);
 		}
 	} else {
 		cout << "Unable to create file: " << outfileName << endl;
 		return;
 	}
 
-	cout << "File created in: " << outfileName << endl;
-	reader.close();
+	cout << "File extracted in: " << outfileName << endl;
+	VolImage::printUILine();
+	writer.close();
+
+	//destroy VolImage to release resources avoiding memory leak
+	ClearArray();
 }
 
 void VolImage::diffmap(int sliceI, int sliceJ, string output_prefix){
@@ -151,6 +174,7 @@ void VolImage::diffmap(int sliceI, int sliceJ, string output_prefix){
 		}
 	} else {
 		cout << "Unable to write to file: " << outfileName << endl;
+		VolImage::printUILine();
 		return;
 	}
 
@@ -158,8 +182,16 @@ void VolImage::diffmap(int sliceI, int sliceJ, string output_prefix){
 	//close the file streams
 	writer.close();
 
-	cout << "difference between: " << sliceI << " and " << sliceJ << endl;
-	cout << "to output file: " << output_prefix << endl;
+	cout << "difference between images " << sliceI << " and " << sliceJ << endl;
+	cout << "Difference Map extracted to file: " << output_prefix << endl;
+	VolImage::printUILine();
+
+	//destroy VolImage to release resources avoiding memory leak
+	ClearArray();
+}
+
+void VolImage::extractFront(int sliceI){
+
 }
 
 int VolImage::volImageSize(void){
@@ -170,4 +202,22 @@ void VolImage::getDimensions(){
 	cout << "width: " << this->width << endl;
 	cout << "height: " << this->height << endl;
 	cout << "numberOfImages: " << this->numberOfImages << endl;
+}
+
+void VolImage::printUILine(){
+		cout << "----------------------------------------------" << endl;
+}
+
+void VolImage::ClearArray(){
+	//destroy VolImage to release resources avoiding memory leak
+	//Free each sub-array
+	for (int j = 0; j < numberOfImages; ++j)
+	{
+	    for(int i = 0; i < height; ++i) {
+	    	//free up the row of pixels in a slice
+	        delete[] slices[i][j];   
+	    }
+	    //free up slice 
+	    delete[] slices[j];
+	}
 }

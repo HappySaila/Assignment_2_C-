@@ -33,11 +33,18 @@ namespace WLSGRA012{
 			// extract slice sliceId and write to output
 			void extract(int sliceId, string output_prefix);
 
+			//will extract a slice from the the front of the volume
+			//extracted slice will be saved as front<sliceId>.raw
+			//extracted file will be saved in the extracted_Images folder
+			void extractFront(int sliceId);
+
 			// number of bytes uses to store image data bytes
 			//and pointers (ignore vector<> container, dims etc)
 			int volImageSize(void);
 
 			void getDimensions();
+			void ClearArray();
+			static void printUILine();
 	};
 
 }
