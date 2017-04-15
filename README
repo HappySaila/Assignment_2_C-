@@ -1,0 +1,36 @@
+.______       _______     ___       _______  .___  ___.  _______ 
+|   _  \     |   ____|   /   \     |       \ |   \/   | |   ____|
+|  |_)  |    |  |__     /  ^  \    |  .--.  ||  \  /  | |  |__   
+|      /     |   __|   /  /_\  \   |  |  |  ||  |\/|  | |   __|  
+|  |\  \----.|  |____ /  _____  \  |  '--'  ||  |  |  | |  |____ 
+| _| `._____||_______/__/     \__\ |_______/ |__|  |__| |_______|
+
+------------------------------------------------------------------
+
+
+Thank you for marking my Assignment-
+
+"make run" 		- will compile and run the program for you with no arguements parsed into it.
+
+"make extract" 	- will compile and run the program and parse in [-x 10 extract]. 
+				- this will create a file in the directory "extracted_Images" called extract10.raw
+				- the file is just the 10th file in the raw images
+
+"make map" 		- will compile and run the program and parse in [-d 10  20 diffMapFile]. 
+				- this will create a file in the directory "extracted_Images" called diffMapFile_10_20.raw
+				- the file will be the difference map between images 10 and 20
+
+"make front" 	- will compile and run the program and parse in [-g 50]. 
+				- this will create a file in the directory "extracted_Images" called frontExtraction50.raw
+				- the file will be a front percpective on depth 50
+
+"make clean"	- cleans the "extracted_Images" directory
+				- deletes Driver class and .o files
+
+------------------------------------------------------------------
+
+Classes:
+Volimage: Carry out all functionality.
+
+
+------------------------------------------------------------------
